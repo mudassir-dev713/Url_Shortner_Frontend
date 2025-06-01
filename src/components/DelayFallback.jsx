@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Loader from './loader';
+import Loader from './Loader';
 export function DelayedFallbackLoader() {
   const [show, setShow] = useState(false);
   useEffect(() => {
