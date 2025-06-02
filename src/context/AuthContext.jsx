@@ -37,7 +37,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const user = await loginUser(email, password);
+    const { user, accessToken, refreshToken } = await loginUser(
+      email,
+      password
+    );
+    if (user) {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+    }
     setUser(user);
 
     setIsAuthenticated(true);
@@ -45,7 +52,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password) => {
-    const newUser = await registerUser(name, email, password);
+    const { newUser, accessToken, refreshToken } = await registerUser(
+      name,
+      email,
+      password
+    );
+    if (newUser) {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+    }
     setUser(newUser);
     setIsAuthenticated(true);
     setLoginStatus(true);
@@ -53,6 +68,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await logoutUser();
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     setUser(null);
     setIsAuthenticated(false);
     setLoginStatus(false);

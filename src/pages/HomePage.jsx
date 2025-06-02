@@ -2,12 +2,8 @@ import { useRef, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { Link as ChevronRight, LinkIcon } from 'lucide-react';
-import Loader from '../components/loader';
 import { features, useStatsData } from '../utils/Constant';
-import { lazy } from 'react';
-const LazyStats = lazy(() => Promise.resolve({ default: StatsSection }));
-const LazyFeatures = lazy(() => Promise.resolve({ default: FeaturesSection }));
-const LazyCTA = lazy(() => Promise.resolve({ default: CTASection }));
+
 
 function HomePage() {
   const { theme } = useTheme();
