@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import './index.css';
 import { UrlProvider } from './context/UrlContext';
+import QrProvider from './context/QrContext';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,7 +15,9 @@ createRoot(document.getElementById('root')).render(
       <ThemeProvider>
         <AuthProvider>
           <UrlProvider>
-            <App />
+            <QrProvider>
+              <App />
+            </QrProvider>
           </UrlProvider>
           <Toaster position="top-center" />
         </AuthProvider>

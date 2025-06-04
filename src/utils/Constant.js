@@ -6,6 +6,7 @@ import {
   TrendingUp,
   Shield,
   Globe,
+  AlertTriangle,
 } from 'lucide-react';
 import { useUrl } from '../context/UrlContext';
 
@@ -63,5 +64,10 @@ export const features = [
     icon: Shield,
     title: 'Bot Traffic Detection',
     text: 'Automatically detect and filter out suspicious or bot-generated traffic.',
+  },
+  {
+    icon: AlertTriangle,
+    title: 'Malicious Link Protection',
+    text: 'Scan links in real time to block phishing, malware, or harmful URLs.',
   },
 ];

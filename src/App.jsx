@@ -19,6 +19,7 @@ const Layout = lazy(() => import('./components/Layout'));
 import { DelayedFallbackLoader } from './components/DelayFallback';
 import { PublicRoute } from './components/ProtectedRoute';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import QrCodePage from './pages/QrCodePage';
 
 function App() {
   const { theme } = useTheme();
@@ -70,14 +71,8 @@ function App() {
                 }
               />
               <Route path="shorten" element={<ShortenerPage />} />
-              <Route
-                path="dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="qr" element={<QrCodePage />} />
+              <Route path="dashboard" element={<DashboardPage />} />
               <Route
                 path="analytics/:id"
                 element={

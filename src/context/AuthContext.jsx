@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, logoutUser, registerUser, getUser } from '../api/Auth.api';
 import { setLoginStatus } from '../api/AuthStatus';
+import { transferQrCodesToUser } from '../utils/transferQrCode';
 
 const AuthContext = createContext();
 
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
     }
+    await transferQrCodesToUser();
     setUser(user);
 
     setIsAuthenticated(true);
@@ -61,6 +63,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
     }
+    await transferQrCodesToUser();
+
     setUser(newUser);
     setIsAuthenticated(true);
     setLoginStatus(true);

@@ -4,9 +4,11 @@ import {
   createUrl,
   fetchStats,
   fetchUrls,
+  fetchUrlsWithAnonId,
 } from '../api/Url.api';
 import { useAuth } from './AuthContext';
 import { toast } from 'react-toastify';
+import { getAnonymousId } from '../utils/anonymousId';
 
 const UrlContext = createContext();
 
@@ -22,7 +24,7 @@ export const UrlProvider = ({ children }) => {
     const loadStats = async () => {
       try {
         let data;
-        user ? (data = await fetchStats()) : ({ data } = await fetchStats());
+        user ? (data = await fetchStats()) : (data = await fetchStats());
 
         setStats(data);
       } catch (error) {
@@ -37,10 +39,12 @@ export const UrlProvider = ({ children }) => {
     try {
       setLoading(true);
       let data;
-      user
-        ? (data = await createUrl(originalUrl))
-        : ({ data } = await createUrl(originalUrl));
-
+      if (user) {
+        data = await createUrl(originalUrl);
+      } else {
+        const id = getAnonymousId();
+        data = await createUrl(originalUrl, id);
+      }
       return data;
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Error creating URL');
@@ -70,7 +74,14 @@ export const UrlProvider = ({ children }) => {
 
   const fetchUserUrls = async () => {
     try {
-      const fetchedUrls = await fetchUrls();
+      let fetchedUrls;
+      let id;
+      if (user) {
+        fetchedUrls = await fetchUrls();
+      } else {
+        id = getAnonymousId();
+        fetchedUrls = await fetchUrlsWithAnonId(id);
+      }
 
       setUrls(fetchedUrls);
     } catch (error) {

@@ -1,8 +1,9 @@
 import axiosInstance from '../utils/AxiosInstance';
 
-export const createUrl = async (url) => {
+export const createUrl = async (url, anonId) => {
   const data = await axiosInstance.post('/api/create', {
     url,
+    anonId,
   });
 
   return data;
@@ -22,6 +23,11 @@ export const deleteUrl = async (id) => {
 };
 export const fetchUrls = async () => {
   const { urls } = await axiosInstance.get('/user/geturl');
+
+  return urls;
+};
+export const fetchUrlsWithAnonId = async (anonId) => {
+  const urls = await axiosInstance.get(`/api/url/${anonId}`);
 
   return urls;
 };

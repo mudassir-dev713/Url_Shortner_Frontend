@@ -9,28 +9,36 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-const UrlCard = lazy(() => import('../components/UrlCard'));
 
+const UrlCard = lazy(() => import('../components/UrlCard'));
+const QrCard = lazy(() => import('../components/QrCard'));
 import { useUrl } from '../context/UrlContext';
+import { useQr } from '../context/QrContext';
 import Loader from '../components/loader';
 
 function DashboardPage() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const { fetchUserUrls, urls, setUrls } = useUrl();
+  const { qrCodes, fetchQr } = useQr();
 
   const [filteredUrls, setFilteredUrls] = useState([]);
+  const [filteredQrCodes, setFilteredQrCodes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('url');
 
-  const [currentPage, setCurrentPage] = useState(1);
   const urlsPerPage = 5;
+  const qrsPerPage = 5;
+
+  const [currentPageUrls, setCurrentPageUrls] = useState(1);
+  const [currentPageQrs, setCurrentPageQrs] = useState(1);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
-  useEffect(() => {
-    if (!user) return;
 
+  useEffect(() => {
     const loadUrls = async () => {
       try {
         setIsLoading(true);
@@ -41,56 +49,96 @@ function DashboardPage() {
         setIsLoading(false);
       }
     };
-
+    const loadqr = async () => {
+      try {
+        setIsLoading(true);
+        await fetchQr();
+      } catch (error) {
+        toast.error('Failed to load your Qr Codes');
+      } finally {
+        setIsLoading(false);
+      }
+    };
     loadUrls();
+    loadqr();
   }, [user]);
 
   useEffect(() => {
     const term = searchTerm.toLowerCase();
-    const filtered = urls
+
+    // Filter and sort URLs
+    const filteredUrlsSorted = urls
       .filter(
         (url) =>
           url.full_url.toLowerCase().includes(term) ||
-          url.short_url.toLowerCase().includes(term)
+          (url.short_url && url.short_url.toLowerCase().includes(term))
       )
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // ← newest first
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    setFilteredUrls(filtered);
-    setCurrentPage(1);
-  }, [searchTerm, urls]);
+    // Combine QR codes from URLs (without short_url) and independently generated QR codes
+    const qrFromUrls = urls.filter((url) => url.qr_code_url && !url.short_url);
+    const allQrCodesCombined = [...qrFromUrls, ...qrCodes].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    // Filter QR codes by search term
+    const filteredQr = allQrCodesCombined.filter((qr) => {
+      const urlStr = qr.full_url || qr.url || '';
+      return urlStr.toLowerCase().includes(term);
+    });
+
+    setFilteredUrls(filteredUrlsSorted);
+    setFilteredQrCodes(filteredQr);
+
+    // Reset pages on search/filter change
+    setCurrentPageUrls(1);
+    setCurrentPageQrs(1);
+  }, [searchTerm, urls, qrCodes]);
 
   const handleDelete = async (url) => {
     const urlId = url._id;
-    const updatedUrls = urls.filter((url) => url._id !== urlId);
+    const updatedUrls = urls.filter((u) => u._id !== urlId);
     setUrls(updatedUrls);
+  };
+  const handleQrDelete = async (qr) => {
+    const qrId = qr._id;
+    const updatedqr = qrCodes.filter((u) => u._id !== qrId);
+    setFilteredQrCodes(updatedqr);
+  };
+  // Pagination calculations for URLs
+  const indexOfLastUrl = currentPageUrls * urlsPerPage;
+  const indexOfFirstUrl = indexOfLastUrl - urlsPerPage;
+  const currentUrls = filteredUrls.slice(indexOfFirstUrl, indexOfLastUrl);
+  const totalUrlPages = Math.ceil(filteredUrls.length / urlsPerPage);
 
-    if (selectedUrl._id === urlId) {
-      setSelectedUrl(null);
+  // Pagination calculations for QR codes
+  const indexOfLastQr = currentPageQrs * qrsPerPage;
+  const indexOfFirstQr = indexOfLastQr - qrsPerPage;
+  const currentQrs = filteredQrCodes.slice(indexOfFirstQr, indexOfLastQr);
+  const totalQrPages = Math.ceil(filteredQrCodes.length / qrsPerPage);
+
+  const paginate = (pageNumber) => {
+    if (activeTab === 'url') {
+      if (pageNumber < 1 || pageNumber > totalUrlPages) return;
+      setCurrentPageUrls(pageNumber);
+    } else {
+      if (pageNumber < 1 || pageNumber > totalQrPages) return;
+      setCurrentPageQrs(pageNumber);
     }
   };
 
-  const indexOfLastUrl = currentPage * urlsPerPage;
-  const indexOfFirstUrl = indexOfLastUrl - urlsPerPage;
-  const currentUrls = filteredUrls.slice(indexOfFirstUrl, indexOfLastUrl);
-  const totalPages = Math.ceil(filteredUrls.length / urlsPerPage);
-
-  const paginate = (pageNumber) => {
-    if (pageNumber < 1 || pageNumber > totalPages) return;
-    setCurrentPage(pageNumber);
-  };
-
   return (
-    <div className="min-h-[calc(100vh-64px)] py-12 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-[calc(100vh-64px)] py-12 px-1 md:px-4">
+      <div className="max-w-screen-xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <div>
             <h1 className="text-3xl font-bold mb-2">Your Dashboard</h1>
             <p
               className={`${
-                theme === 'dark' ? 'text-gray-300' : ' dark:text-gray-800'
+                theme === 'dark' ? 'text-gray-300' : 'dark:text-gray-800'
               }`}
             >
-              Manage and analyze all your shortened URLs in one place.
+              Manage and analyze all your shortened URLs and QR codes.
             </p>
           </div>
           <div className="mt-4 md:mt-0">
@@ -104,98 +152,143 @@ function DashboardPage() {
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="flex space-x-4 mb-6 border-b border-gray-300 dark:border-gray-600">
+          <button
+            onClick={() => setActiveTab('url')}
+            className={`px-4 py-2 font-medium border-b-2 ${
+              activeTab === 'url'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-gray-500'
+            }`}
+          >
+            URLs
+          </button>
+          <button
+            onClick={() => setActiveTab('qr')}
+            className={`px-4 py-2 font-medium border-b-2 ${
+              activeTab === 'qr'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-gray-500'
+            }`}
+          >
+            QR Codes
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className={`lg:col-span-2 `}>
+          <div className="lg:col-span-3">
             <div
               className={`rounded-lg shadow-md ${
                 theme === 'dark' ? 'bg-gray-800' : 'bg-white'
               }`}
             >
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="md:p-4 py-4 px-1 border-b border-gray-200 dark:border-gray-700">
                 <div className="relative">
                   <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search your URLs..."
+                    placeholder="Search..."
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-transparent"
                   />
                 </div>
               </div>
 
-              <div className="p-4">
+              <div className="md:p-4 py-4 px-1">
                 {isLoading ? (
                   <Loader />
-                ) : filteredUrls.length === 0 ? (
-                  <div className="text-center py-8">
-                    <div className="inline-block p-3 rounded-full bg-gray-200 dark:bg-gray-700 mb-4">
-                      <LinkIcon className="h-8 w-8 text-gray-500 dark:text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-medium mb-2">No URLs found</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">
-                      {searchTerm
-                        ? 'No URLs match your search term.'
-                        : "You haven't shortened any URLs yet."}
-                    </p>
-                    <Link
-                      to="/shorten"
-                      className="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90"
-                    >
-                      <LinkIcon className="mr-2 h-5 w-5" />
-                      Create Your First Short URL
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {currentUrls.map((url) => (
-                      <div key={url._id} className="cursor-pointer">
-                        <Suspense fallback={<Loader />}>
+                ) : activeTab === 'url' ? (
+                  currentUrls.length > 0 ? (
+                    <div className="space-y-4">
+                      {currentUrls.map((url) => (
+                        <Suspense fallback={<Loader />} key={url._id}>
                           <UrlCard
                             url={url}
-                            onDelete={() => {
-                              handleDelete(url);
-                            }}
+                            onDelete={() => handleDelete(url)}
                           />
                         </Suspense>
-                      </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500">
+                      No shortened URLs found.
+                    </p>
+                  )
+                ) : currentQrs.length > 0 ? (
+                  <div className="space-y-4">
+                    {currentQrs.map((qr, idx) => (
+                      <Suspense
+                        fallback={<Loader />}
+                        key={qr._id || qr.url || idx}
+                      >
+                        <QrCard
+                          url={{
+                            id: qr._id,
+                            full_url: qr.full_url || qr.url,
+                            qr_code_url: qr.qr_code_url || qr.qrCode,
+                            createdAt: qr.createdAt,
+                          }}
+                          onDelete={() => {
+                            handleQrDelete(qr);
+                          }}
+                        />
+                      </Suspense>
                     ))}
-
-                    {/* Pagination */}
-                    {filteredUrls.length > urlsPerPage && (
-                      <div className="flex justify-center items-center space-x-2 mt-6">
-                        <button
-                          onClick={() => paginate(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="p-2 rounded-md disabled:opacity-50"
-                        >
-                          <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        {[...Array(totalPages)].map((_, i) => (
-                          <button
-                            key={i + 1}
-                            onClick={() => paginate(i + 1)}
-                            className={`px-3 py-1 rounded-md ${
-                              currentPage === i + 1
-                                ? 'bg-primary text-white'
-                                : 'hover:bg-gray-200 dark:hover:bg-gray-700'
-                            }`}
-                          >
-                            {i + 1}
-                          </button>
-                        ))}
-                        <button
-                          onClick={() => paginate(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="p-2 rounded-md disabled:opacity-50"
-                        >
-                          <ChevronRight className="h-5 w-5" />
-                        </button>
-                      </div>
-                    )}
                   </div>
+                ) : (
+                  <p className="text-center text-gray-500">
+                    No QR codes found.
+                  </p>
                 )}
               </div>
+
+              {/* Pagination */}
+              {(activeTab === 'url' && totalUrlPages > 1) ||
+              (activeTab === 'qr' && totalQrPages > 1) ? (
+                <div className="flex justify-center items-center py-4 border-t border-gray-200 dark:border-gray-700 space-x-4">
+                  <button
+                    onClick={() =>
+                      paginate(
+                        activeTab === 'url'
+                          ? currentPageUrls - 1
+                          : currentPageQrs - 1
+                      )
+                    }
+                    disabled={
+                      activeTab === 'url'
+                        ? currentPageUrls === 1
+                        : currentPageQrs === 1
+                    }
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <ChevronLeft />
+                  </button>
+                  <span>
+                    Page{' '}
+                    {activeTab === 'url' ? currentPageUrls : currentPageQrs} of{' '}
+                    {activeTab === 'url' ? totalUrlPages : totalQrPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      paginate(
+                        activeTab === 'url'
+                          ? currentPageUrls + 1
+                          : currentPageQrs + 1
+                      )
+                    }
+                    disabled={
+                      activeTab === 'url'
+                        ? currentPageUrls === totalUrlPages
+                        : currentPageQrs === totalQrPages
+                    }
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <ChevronRight />
+                  </button>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

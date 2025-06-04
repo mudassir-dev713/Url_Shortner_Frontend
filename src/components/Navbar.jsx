@@ -11,6 +11,8 @@ import {
   LogOut,
   User,
   BarChart2,
+  QrCode,
+  HomeIcon,
 } from 'lucide-react';
 
 function Navbar() {
@@ -56,7 +58,7 @@ function Navbar() {
           </div>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-8">
             <Link
               to="/"
               className={`transition-colors hover:text-primary ${
@@ -76,18 +78,26 @@ function Navbar() {
             >
               Shorten URL
             </Link>
+            <Link
+              to="/qr"
+              className={`transition-colors hover:text-primary ${
+                location.pathname === '/qr' ? 'text-primary font-medium' : ''
+              }`}
+            >
+              QrCode
+            </Link>
+            <Link
+              to="/dashboard"
+              className={`transition-colors hover:text-primary ${
+                location.pathname === '/dashboard'
+                  ? 'text-primary font-medium'
+                  : ''
+              }`}
+            >
+              Dashboard
+            </Link>
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className={`transition-colors hover:text-primary ${
-                    location.pathname === '/dashboard'
-                      ? 'text-primary font-medium'
-                      : ''
-                  }`}
-                >
-                  Dashboard
-                </Link>
                 <button
                   onClick={handleLogout}
                   className={`flex items-center space-x-1 ${
@@ -138,7 +148,7 @@ function Navbar() {
           </div>
 
           {/* Mobile Menu Button and Theme Toggle */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={toggleTheme}
               className="p-2 mr-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -219,7 +229,7 @@ function Navbar() {
               onClick={() => {
                 handleMobileNavClick('/');
               }}
-              className={`rounded  block ${
+              className={`rounded px-3 py-2 flex items-center space-x-2 ${
                 location.pathname === '/'
                   ? 'bg-primary/10 text-primary'
                   : `${
@@ -229,7 +239,8 @@ function Navbar() {
                     }`
               }`}
             >
-              Home
+              <HomeIcon className="w-5 h-5" />
+              <span>Home</span>
             </button>
 
             <button
@@ -249,25 +260,42 @@ function Navbar() {
               <LinkIcon className="w-5 h-5" />
               <span>Shorten URL</span>
             </button>
+            <button
+              onClick={() => {
+                handleMobileNavClick('/qr');
+              }}
+              className={`rounded px-3 py-2 flex items-center space-x-2 ${
+                location.pathname === '/qr'
+                  ? 'bg-primary/10 text-primary'
+                  : `${
+                      theme === 'dark'
+                        ? 'dark:hover:bg-gray-700'
+                        : 'hover:bg-gray-200'
+                    }`
+              }`}
+            >
+              <QrCode className="w-5 h-5" />
+              <span>QrCode</span>
+            </button>
+            <button
+              onClick={() => {
+                handleMobileNavClick('/dashboard');
+              }}
+              className={`rounded px-3 py-2 flex items-center space-x-2 ${
+                location.pathname === '/dashboard'
+                  ? 'bg-primary/10 text-primary'
+                  : `${
+                      theme === 'dark'
+                        ? 'dark:hover:bg-gray-700'
+                        : 'hover:bg-gray-200'
+                    }`
+              }`}
+            >
+              <BarChart2 className="w-5 h-5" />
+              <span>Dashboard</span>
+            </button>
             {isAuthenticated ? (
               <>
-                <button
-                  onClick={() => {
-                    handleMobileNavClick('/dashboard');
-                  }}
-                  className={`rounded px-3 py-2 flex items-center space-x-2 ${
-                    location.pathname === '/dashboard'
-                      ? 'bg-primary/10 text-primary'
-                      : `${
-                          theme === 'dark'
-                            ? 'dark:hover:bg-gray-700'
-                            : 'hover:bg-gray-200'
-                        }`
-                  }`}
-                >
-                  <BarChart2 className="w-5 h-5" />
-                  <span>Dashboard</span>
-                </button>
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-3 py-2 flex items-center space-x-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"

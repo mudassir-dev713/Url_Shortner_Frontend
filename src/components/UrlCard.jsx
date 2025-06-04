@@ -69,18 +69,19 @@ function UrlCard({ url, onDelete }) {
       exit="exit"
       whileHover={{ scale: 1.02 }}
       style={{ viewTransitionName: `card-${url._id}` }}
-      className={`rounded-lg overflow-hidden border transition-all duration-200 border-theme bg-surface`}
+      className={`rounded-lg overflow-hidden border transition-all duration-200 border-theme bg-surface
+        `}
     >
       <div
         className={`rounded-lg overflow-hidden border transition-all duration-200 transform hover:shadow-md hover:-translate-y-1 ${
           theme === 'dark'
-            ? 'bg-gray-800 border-gray-700'
-            : 'bg-white border-gray-200'
+            ? 'bg-gray-900 border-gray-700 text-gray-200'
+            : 'bg-white border-gray-300 text-gray-800'
         }`}
       >
-        <div className="p-6">
+        <div className="md:p-6 py-6 max-[400px]:px-2 px-3 ">
           <div className="flex flex-col space-y-3">
-            <div className="flex justify-between items-start">
+            <div className="flex flex-col  lg:flex-row justify-between items-start">
               <h3 className="font-semibold text-lg truncate">
                 <a
                   href={url.full_url}
@@ -93,7 +94,7 @@ function UrlCard({ url, onDelete }) {
                 </a>
               </h3>
               <span
-                className={`text-xs px-2 py-1 rounded-full ${
+                className={`text-xs px-2 py-1 rounded-full mt-2 lg:mt-0 ${
                   theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
                 }`}
               >
@@ -128,16 +129,14 @@ function UrlCard({ url, onDelete }) {
 
               <div className="flex space-x-2">
                 <motion.button
+                  onClick={handleClick}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={handleClick}
-                  className="p-2 rounded-md hover:bg-gradient-card transition-colors flex gap-2 items-center"
-                  aria-label="View statistics"
+                  className="flex items-center gap-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                  aria-label="View Analytics"
                 >
-                  <span className="text-sm text-gray-500 dark:text-gray-400 select-none">
-                    Click analytics to view stats
-                  </span>
-                  <BarChart2 className="h-6 w-6" />
+                  <BarChart2 className="h-4 w-4" />
+                  Analytics
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
