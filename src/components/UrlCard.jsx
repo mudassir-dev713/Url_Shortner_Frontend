@@ -51,13 +51,18 @@ function UrlCard({ url, onDelete }) {
       setIsDeleting(false);
     }
   };
+  const analyticsData = {
+    fullUrl: url.full_url,
+    shortUrl: import.meta.env.VITE_BACKEND_URL_DNS + url.short_url,
+    createdAt: url.createdAt,
+  };
   const handleClick = () => {
     if (document.startViewTransition) {
       document.startViewTransition(() => {
-        navigate(`/analytics/${url._id}`);
+        navigate(`/analytics/${url._id}`, { state: analyticsData });
       });
     } else {
-      navigate(`/analytics/${url._id}`);
+      navigate(`/analytics/${url._id}`, { state: analyticsData });
     }
   };
 
@@ -82,7 +87,7 @@ function UrlCard({ url, onDelete }) {
         <div className="md:p-6 py-6 max-[400px]:px-2 px-3 ">
           <div className="flex flex-col space-y-3">
             <div className="flex flex-col  lg:flex-row justify-between items-start">
-              <h3 className="font-semibold text-lg truncate">
+              <h3 className="font-semibold text-lg truncate max-[600px]:mr-1 max-[600px]:max-w-xs">
                 <a
                   href={url.full_url}
                   target="_blank"
@@ -112,7 +117,7 @@ function UrlCard({ url, onDelete }) {
                 onClick={handleCopy}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-1 rounded hover:bg-gradient-card transition-colors"
+                className="p-2 rounded hover:bg-gradient-card transition-colors"
                 aria-label="Copy short URL"
               >
                 <Copy className="h-4 w-4" />

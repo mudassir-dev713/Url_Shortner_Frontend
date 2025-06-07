@@ -1,1 +1,12 @@
-/*    /index.html   200
+/robots.txt         /robots.txt         200
+/sitemap.xml        /sitemap.xml        200
+/favicon.svg        /favicon.svg        200
+/apple-touch-icon.png /apple-touch-icon.png 200
+/LinkSnip.png       /LinkSnip.png       200
+/og-image.jpg       /og-image.jpg       200
+/web-app-manifest-192x192.png /web-app-manifest-192x192.png 200
+/web-app-manifest-512x512.png /web-app-manifest-512x512.png 200
+/manifest.webmanifest /manifest.webmanifest 200
+/registerSW.js      /registerSW.js      200
+
+/*                  /index.html         200

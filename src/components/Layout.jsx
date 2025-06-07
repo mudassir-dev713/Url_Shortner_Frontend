@@ -1,17 +1,23 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from './Navbar';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
+
+const Navbar = lazy(() => import('./Navbar'));
 
 const Footer = lazy(() => import('./Footer'));
 
 function Layout() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Suspense fallback={null}>
+        <Navbar />
+      </Suspense>
+
       <main className="flex-grow">
         <Outlet />
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </div>
   );
 }

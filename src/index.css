@@ -191,13 +191,14 @@ input:-webkit-autofill:focus {
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out forwards;
+  animation: fadeIn 0.8s ease-in-out forwards;
 }
+
 .animate-slideUp {
-  animation: slideUp 0.5s ease-in-out forwards;
+  animation: slideUp 0.8s ease-in-out forwards;
 }
 .animate-scaleIn {
-  animation: scaleIn 0.3s ease-in-out forwards;
+  animation: scaleIn 0.8s ease-in-out forwards;
 }
 
 @keyframes pulse-strong {

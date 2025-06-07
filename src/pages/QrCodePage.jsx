@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Link as LinkIcon, ChevronRight, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useQr } from '../context/QrContext';
+import { Helmet } from 'react-helmet-async';
 
 function QrCodePage() {
   const { theme } = useTheme();
@@ -67,135 +68,156 @@ function QrCodePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Create QR Code
-          </h1>
-          <p
-            className={`text-lg ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}
-          >
-            Instantly generate a QR code from any link with just one click.
-          </p>
-        </div>
+    <>
+      <Helmet>
+        <title>QR Code Generator | LinkSnip</title>
+        <meta
+          name="description"
+          content="Generate high-quality, downloadable QR codes for any URL in seconds."
+        />
+        <meta property="og:title" content="QR Code Generator" />
+        <meta
+          property="og:description"
+          content="Instantly turn your URL into a shareable QR code. No sign up required."
+        />
+        <meta
+          property="og:image"
+          content="https://link-snip.netlify.app/og-image.jpg"
+        />
+        <meta property="og:url" content="https://link-snip.netlify.app/qr" />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
 
-        <div
-          className={`rounded-xl shadow-lg p-6 md:p-8 transition-colors duration-200 ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="url"
-                className={`block text-sm font-medium mb-1 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}
-              >
-                Enter a URL
-              </label>
-              <input
-                type="url"
-                id="url"
-                value={url}
-                onChange={(e) => {
-                  setUrl(e.target.value);
-                  setError('');
-                }}
-                placeholder="https://example.com"
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  error
-                    ? 'border-red-500'
-                    : 'border-gray-300 dark:border-gray-600'
-                } focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-transparent`}
-                disabled={isLoading}
-              />
-              {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center items-center px-4 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition disabled:opacity-70"
-              >
-                {isLoading ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                      ></path>
-                    </svg>
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <LinkIcon className="mr-2 h-5 w-5" />
-                    Create QR Code
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-
-          {qr?.qrCode && typeof qr.qrCode === 'string' && (
-            <div
-              className={`mt-10 md:p-6 p-3 rounded-lg border animate-fadeIn ${
-                theme === 'dark'
-                  ? 'bg-gray-700/50 border-gray-600'
-                  : 'bg-gray-50 border-gray-200'
+      <div className="min-h-[calc(100vh-64px)] py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              Create QR Code
+            </h1>
+            <p
+              className={`text-lg ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}
             >
-              <h3 className="font-semibold text-lg mb-4">
-                Your QR Code is ready!
-              </h3>
-              <div className="flex flex-col items-center space-y-4">
-                <img
-                  src={qr.qrCode}
-                  alt="QR Code"
-                  ref={qrImageRef}
-                  className="w-[220px] h-[220px] object-contain"
+              Instantly generate a QR code from any link with just one click.
+            </p>
+          </div>
+
+          <div
+            className={`rounded-xl shadow-lg p-6 md:p-8 transition-colors duration-200 ${
+              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+            }`}
+          >
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="url"
+                  className={`block text-sm font-medium mb-1 ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}
+                >
+                  Enter a URL
+                </label>
+                <input
+                  type="url"
+                  id="url"
+                  value={url}
+                  onChange={(e) => {
+                    setUrl(e.target.value);
+                    setError('');
+                  }}
+                  placeholder="https://example.com"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    error
+                      ? 'border-red-500'
+                      : 'border-gray-300 dark:border-gray-600'
+                  } focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-transparent`}
+                  disabled={isLoading}
                 />
-                <div className="flex gap-4 mt-4">
-                  <button
-                    onClick={handleDownload}
-                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download PNG
-                  </button>
-                  <button
-                    onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-1 text-primary text-sm hover:text-primary/90"
-                  >
-                    Go to Dashboard
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex justify-center items-center px-4 py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition disabled:opacity-70"
+                >
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        ></path>
+                      </svg>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <LinkIcon className="mr-2 h-5 w-5" />
+                      Create QR Code
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {qr?.qrCode && typeof qr.qrCode === 'string' && (
+              <div
+                className={`mt-10 md:p-6 p-3 rounded-lg border animate-fadeIn ${
+                  theme === 'dark'
+                    ? 'bg-gray-700/50 border-gray-600'
+                    : 'bg-gray-50 border-gray-200'
+                }`}
+              >
+                <h3 className="font-semibold text-lg mb-4">
+                  Your QR Code is ready!
+                </h3>
+                <div className="flex flex-col items-center space-y-4">
+                  <img
+                    src={qr.qrCode}
+                    alt="QR Code"
+                    ref={qrImageRef}
+                    className="w-[220px] h-[220px] object-contain"
+                  />
+                  <div className="flex gap-4 mt-4">
+                    <button
+                      onClick={handleDownload}
+                      className="flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download PNG
+                    </button>
+                    <button
+                      onClick={() => navigate('/dashboard')}
+                      className="flex items-center gap-1 text-primary text-sm hover:text-primary/90"
+                    >
+                      Go to Dashboard
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

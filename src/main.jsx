@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import './index.css';
 import { UrlProvider } from './context/UrlContext';
 import QrProvider from './context/QrContext';
+import { HelmetProvider } from 'react-helmet-async';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,7 +17,9 @@ createRoot(document.getElementById('root')).render(
         <AuthProvider>
           <UrlProvider>
             <QrProvider>
-              <App />
+              <HelmetProvider>
+                <App />
+              </HelmetProvider>
             </QrProvider>
           </UrlProvider>
           <Toaster position="top-center" />

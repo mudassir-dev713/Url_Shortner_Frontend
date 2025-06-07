@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://link-snip.netlify.app/sitemap.xml

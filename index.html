@@ -2,10 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/public/icon.png" />
+
+    <!-- ✅ Correct favicon -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Link Snip" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ✅ Async font loading (non-blocking) -->
-    <link rel="stylesheet" href="./public/icon.png" />
+
+    <!-- ✅ Manifest -->
+
+    <!-- ✅ Fonts (async + fallback) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,16 +35,47 @@
       />
     </noscript>
 
+    <!-- ✅ SEO + Open Graph -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Mudassir" />
     <meta
       name="description"
       content="LinkSnip - Modern URL Shortener with powerful analytics and custom branding options"
     />
-    <meta name="theme-color" content="#22C55E" />
+    <meta name="theme-color" />
+
+    <meta property="og:title" content="Link Snip – Free URL Shortener" />
+    <meta
+      property="og:description"
+      content="Shorten long links, generate QR codes, and track clicks easily."
+    />
+    <meta
+      property="og:image"
+      content="https://link-snip.netlify.app/og-image.jpg"
+    />
+    <meta property="og:url" content="https://link-snip.netlify.app" />
+    <meta property="og:type" content="website" />
+
     <title>LinkSnip | Modern URL Shortener</title>
   </head>
 
   <body>
     <div id="root"></div>
+
+    <!-- Main script -->
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- ✅ Schema.org Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "LinkSnip",
+        "applicationCategory": "WebApplication",
+        "url": "https://link-snip.netlify.app",
+        "description": "Shorten, track and analyze your links",
+        "operatingSystem": "All"
+      }
+    </script>
   </body>
 </html>
