@@ -18,11 +18,11 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import QrCodePage from './pages/QrCodePage';
 import { useAuth } from './context/AuthContext';
 import { ThemeColorUpdater } from './components/ThemeColorUpdater';
-import lazyWithPreload from 'react-lazy-with-preload';
+// import lazyWithPreload from 'react-lazy-with-preload';
 import Loader from './components/Loader';
 function App() {
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
   const previousPathRef = useRef(location.pathname);
   const navigate = useNavigate();
@@ -40,14 +40,14 @@ function App() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       navigate('/dashboard');
     }
-  }, []);
+  }, [isAuthenticated]);
 
-  useEffect(() => {
-    lazyWithPreload(() => import('./pages/DashboardPage'));
-  }, []);
+  // useEffect(() => {
+  //   lazyWithPreload(() => import('./pages/DashboardPage'));
+  // }, []);
 
   return (
     <div
