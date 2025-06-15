@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true, // Shows useful PWA logs during development
+        enabled: true,
       },
       includeAssets: [
         'favicon.svg',
@@ -19,6 +19,7 @@ export default defineConfig({
         'apple-touch-icon.png',
         'web-app-manifest-192x192.png',
         'web-app-manifest-512x512.png',
+        'offline.html', // Important: cache the offline fallback page
       ],
       manifestFilename: 'manifest.webmanifest',
       manifest: {
@@ -55,8 +56,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        skipWaiting: true, // Force install immediately on update
-        clientsClaim: true, // Control uncontrolled tabs
+        skipWaiting: true,
+        clientsClaim: true,
+        navigateFallback: '/offline.html',
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
@@ -66,7 +68,7 @@ export default defineConfig({
               cacheName: 'html-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24, // 1 day
+                maxAgeSeconds: 60 * 60 * 24,
               },
             },
           },
@@ -78,7 +80,7 @@ export default defineConfig({
               cacheName: 'assets-cache',
               expiration: {
                 maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                maxAgeSeconds: 60 * 60 * 24 * 7,
               },
             },
           },
@@ -89,7 +91,7 @@ export default defineConfig({
               cacheName: 'static-assets',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
             },
           },
@@ -107,7 +109,7 @@ export default defineConfig({
               cacheName: 'google-fonts-webfonts',
               expiration: {
                 maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
             },
           },
