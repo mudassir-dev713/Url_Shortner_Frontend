@@ -2,15 +2,24 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+
 export default defineConfig({
   base: '/',
   plugins: [
     react(),
     tailwindcss(),
-
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.png'],
+      devOptions: {
+        enabled: true, // Shows useful PWA logs during development
+      },
+      includeAssets: [
+        'favicon.svg',
+        'robots.txt',
+        'apple-touch-icon.png',
+        'web-app-manifest-192x192.png',
+        'web-app-manifest-512x512.png',
+      ],
       manifestFilename: 'manifest.webmanifest',
       manifest: {
         name: 'LinkSnip',
@@ -46,14 +55,19 @@ export default defineConfig({
         ],
       },
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
+        skipWaiting: true, // Force install immediately on update
+        clientsClaim: true, // Control uncontrolled tabs
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'document',
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'html-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24, // 1 day
+              },
             },
           },
           {
@@ -62,6 +76,10 @@ export default defineConfig({
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'assets-cache',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+              },
             },
           },
           {
@@ -69,6 +87,28 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'static-assets',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'google-fonts-stylesheets',
+            },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-webfonts',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
             },
           },
         ],
