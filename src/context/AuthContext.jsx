@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, logoutUser, registerUser, getUser } from '../api/Auth.api';
 import { setLoginStatus } from '../api/AuthStatus';
 import { transferQrCodesToUser } from '../utils/transferQrCode';
+import Loader from '../components/Loader';
 
 const AuthContext = createContext();
 
@@ -90,7 +91,7 @@ export const AuthProvider = ({ children }) => {
         logout,
       }}
     >
-      {!isLoading && children}
+      {isLoading ? <Loader /> : children}
     </AuthContext.Provider>
   );
 };
