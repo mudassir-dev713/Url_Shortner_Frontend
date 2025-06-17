@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
         logout,
       }}
     >
-      {isLoading ? <Loader /> : children}
+      {children}
     </AuthContext.Provider>
   );
 };
