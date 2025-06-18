@@ -12,7 +12,7 @@ function Layout() {
         <Navbar />
       </Suspense>
 
-      <main className="flex-grow">
+      <main className="flex-grow" role="main">
         <Outlet />
       </main>
       <Suspense fallback={null}>

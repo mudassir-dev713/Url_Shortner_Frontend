@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet-async';
 const CTASection = lazy(() => import('../components/CTASection'));
 const FeaturesSection = lazy(() => import('../components/FeaturesSection'));
 const StatsSection = lazy(() => import('../components/StatsSection'));
+const DashboardPage = lazy(() => import('./DashboardPage'));
 
 import Loader from '../components/Loader';
 function HomePage() {
@@ -66,6 +67,11 @@ function HomePage() {
       intersectionObserver.disconnect();
       mutationObserver.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    // Preload DashboardPage after initial render
+    import('./DashboardPage');
   }, []);
 
   const scrollToFeatures = async () => {

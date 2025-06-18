@@ -19,7 +19,6 @@ export default defineConfig({
         'apple-touch-icon.png',
         'web-app-manifest-192x192.png',
         'web-app-manifest-512x512.png',
-        'offline.html', // Important: cache the offline fallback page
       ],
       manifestFilename: 'manifest.webmanifest',
       manifest: {
@@ -54,18 +53,22 @@ export default defineConfig({
             type: 'image/png',
           },
         ],
+        categories: ['productivity', 'utilities'],
+        lang: 'en',
+        dir: 'ltr',
       },
       workbox: {
         skipWaiting: true,
         clientsClaim: true,
-        navigateFallback: '/offline.html',
         cleanupOutdatedCaches: true,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'document',
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'html-cache',
+              networkTimeoutSeconds: 3,
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24,
@@ -110,6 +113,18 @@ export default defineConfig({
               expiration: {
                 maxEntries: 30,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/api\.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 5,
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 5, // 5 minutes
               },
             },
           },

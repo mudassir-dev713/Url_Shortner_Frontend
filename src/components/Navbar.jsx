@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useOffline } from '../hooks/useOffline';
 import {
   Link as LinkIcon,
   Moon,
@@ -13,11 +14,13 @@ import {
   BarChart2,
   QrCode,
   HomeIcon,
+  WifiOff,
 } from 'lucide-react';
 
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, logout } = useAuth();
+  const isOffline = useOffline();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,6 +43,7 @@ function Navbar() {
 
   return (
     <nav
+      role="navigation"
       className={`sticky top-0 z-50 backdrop-blur-lg transition-all duration-200 border-b
       ${
         theme === 'dark'
@@ -55,6 +59,12 @@ function Navbar() {
               <LinkIcon className="h-6 w-6 text-primary" />
               <span className="font-bold text-xl">LinkSnip</span>
             </Link>
+            {isOffline && (
+              <div className="ml-2 flex items-center text-orange-500 text-xs">
+                <WifiOff className="h-3 w-3 mr-1" />
+                <span>Offline</span>
+              </div>
+            )}
           </div>
 
           {/* Desktop Nav Links */}

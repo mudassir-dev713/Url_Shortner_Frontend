@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, logoutUser, registerUser, getUser } from '../api/Auth.api';
 import { setLoginStatus } from '../api/AuthStatus';
 import { transferQrCodesToUser } from '../utils/transferQrCode';
-import Loader from '../components/Loader';
+import React, { lazy } from 'react';
 
 const AuthContext = createContext();
 

@@ -7,6 +7,7 @@ function Footer() {
 
   return (
     <footer
+      role="contentinfo"
       className={`py-8 border-t transition-colors duration-200 ${
         theme === 'dark'
           ? 'bg-gray-900 text-gray-300 border-gray-800'
