@@ -18,17 +18,36 @@ export const UrlProvider = ({ children }) => {
   const { user } = useAuth();
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState([]);
+  const [stats, setStats] = useState({
+    urls: 0,
+    users: 0,
+    clicks: 0,
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     const loadStats = async () => {
       try {
+        setStatsLoading(true);
         let data;
         user ? (data = await fetchStats()) : (data = await fetchStats());
 
-        setStats(data);
+        // Ensure data has the expected structure with fallbacks
+        setStats({
+          urls: data?.urls || 0,
+          users: data?.users || 0,
+          clicks: data?.clicks || 0,
+        });
       } catch (error) {
         console.log('Failed to fetch stats:', error);
+        // Set default values on error
+        setStats({
+          urls: 0,
+          users: 0,
+          clicks: 0,
+        });
+      } finally {
+        setStatsLoading(false);
       }
     };
 
@@ -99,6 +118,7 @@ export const UrlProvider = ({ children }) => {
         generateCustomUrl,
         fetchUserUrls,
         stats,
+        statsLoading,
       }}
     >
       {children}

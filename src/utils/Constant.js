@@ -11,20 +11,20 @@ import {
 import { useUrl } from '../context/UrlContext';
 
 export const useStatsData = () => {
-  const { stats } = useUrl();
+  const { stats, statsLoading } = useUrl();
 
   return [
     {
       text: 'Links Shortened',
-      stats: `${stats?.urls}+` || 0,
+      stats: statsLoading ? '...' : `${stats?.urls || 0}+`,
     },
     {
       text: 'Happy Users',
-      stats: `${stats?.users}+` || 0,
+      stats: statsLoading ? '...' : `${stats?.users || 0}+`,
     },
     {
       text: 'Clicks Tracked',
-      stats: `${stats?.clicks}+` || 0,
+      stats: statsLoading ? '...' : `${stats?.clicks || 0}+`,
     },
   ];
 };
@@ -53,7 +53,7 @@ export const features = [
   {
     icon: TrendingUp,
     title: 'Click Growth',
-    text: 'Visualize your link’s click trends over the past 7 days.',
+    text: "Visualize your link's click trends over the past 7 days.",
   },
   {
     icon: Globe,

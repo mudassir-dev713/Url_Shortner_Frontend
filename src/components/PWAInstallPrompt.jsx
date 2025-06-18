@@ -19,30 +19,27 @@ const PWAInstallPrompt = () => {
       const lastShown = localStorage.getItem('pwa-prompt-last-shown');
       const now = Date.now();
       const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      const sevenDays = oneDay * 7;
+
+      // Check if already installed
+      const isInstalled = localStorage.getItem('pwa-installed');
+      if (isInstalled) {
+        return;
+      }
 
       // Don't show if dismissed within last 7 days
-      if (lastDismissed && now - parseInt(lastDismissed) < oneDay * 7) {
+      if (lastDismissed && now - parseInt(lastDismissed) < sevenDays) {
         return;
       }
 
-      // Don't show if shown within last 3 days
-      if (lastShown && now - parseInt(lastShown) < oneDay * 3) {
+      // Don't show if shown within last 7 days
+      if (lastShown && now - parseInt(lastShown) < sevenDays) {
         return;
       }
 
-      // Show install prompt based on authentication status
-      if (!isAuthenticated) {
-        // Show every time for non-logged-in users (if not recently dismissed)
-        setShowInstallPrompt(true);
-        localStorage.setItem('pwa-prompt-last-shown', now.toString());
-      } else {
-        // Show occasionally for logged-in users (20% chance)
-        const shouldShow = Math.random() < 0.2;
-        if (shouldShow) {
-          setShowInstallPrompt(true);
-          localStorage.setItem('pwa-prompt-last-shown', now.toString());
-        }
-      }
+      // Show install prompt for all users (if not recently dismissed/shown)
+      setShowInstallPrompt(true);
+      localStorage.setItem('pwa-prompt-last-shown', now.toString());
     };
 
     const handleAppInstalled = () => {
@@ -54,12 +51,6 @@ const PWAInstallPrompt = () => {
       console.log('PWA was installed');
     };
 
-    // Check if already installed
-    const isInstalled = localStorage.getItem('pwa-installed');
-    if (isInstalled) {
-      return;
-    }
-
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
@@ -70,7 +61,7 @@ const PWAInstallPrompt = () => {
       );
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [isAuthenticated]);
+  }, []);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -86,6 +77,8 @@ const PWAInstallPrompt = () => {
       localStorage.setItem('pwa-installed', 'true');
     } else {
       console.log('User dismissed the install prompt');
+      // Mark as dismissed for 7 days
+      localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
     }
 
     // Clear the deferredPrompt

@@ -1,8 +1,10 @@
 import { useTheme } from '../context/ThemeContext';
 import { useStatsData } from '../utils/Constant';
+import { useUrl } from '../context/UrlContext';
 
 const StatsSection = () => {
   const { theme } = useTheme();
+  const { statsLoading } = useUrl();
   const Stats = useStatsData();
 
   return (
@@ -20,7 +22,11 @@ const StatsSection = () => {
               key={index}
             >
               <h3 className="text-4xl font-bold text-primary mb-2">
-                {item.stats}
+                {statsLoading ? (
+                  <div className="animate-pulse bg-gray-300 dark:bg-gray-600 h-12 w-24 mx-auto rounded"></div>
+                ) : (
+                  item.stats
+                )}
               </h3>
               <p
                 className={
